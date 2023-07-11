@@ -11,18 +11,39 @@ import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import Logo from "../../assets/images/Bronco.png";
 import SocialSignInButtons from "../components/SocialSignInButtons";
+import auth from "../../Firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
 const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onSignInPressed = () => {
-    // console.warn("Signed In");
     //Validate with firebase
-    navigation.navigate("Home");
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // const user = userCredential.user;
+        console.warn("Signed In");
+        navigation.navigate("Home");
+        setEmail("");
+        setPassword("");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        // const errorMessage = error.message;
+        console.log(errorCode);
+        if (errorCode == "auth/wrong-password") {
+          console.warn("Wrong Email/Password");
+        } else if (errorCode == "auth/user-not-found") {
+          console.warn("User does not exists");
+        } else {
+          console.warn("Check your credentials");
+        }
+        navigation.navigate("SignIn");
+      });
   };
   const onForgotPasswordPressed = () => {
     // console.warn("Forgot Password Clicked");
@@ -42,11 +63,7 @@ const SignInScreen = () => {
           resizeMode="contain"
         />
         <View style={styles.bottomContainer}>
-          <CustomInput
-            placeholder="Username"
-            value={username}
-            setValue={setUsername}
-          />
+          <CustomInput placeholder="Email" value={email} setValue={setEmail} />
 
           <CustomInput
             placeholder="Password"

@@ -1,25 +1,19 @@
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  useWindowDimensions,
-} from "react-native";
 import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
-import Logo from "../../assets/images/Bronco.png";
 import SocialSignInButtons from "../components/SocialSignInButtons";
+import auth from "../../Firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
-  const [username, setUsername] = useState("");
+  // const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordRepeat, setPasswordRepeat] = useState("");
+  // const [passwordRepeat, setPasswordRepeat] = useState("");
 
   const onPrivacyPolicyPressed = () => {
     console.warn("Privacy Policy Clicked");
@@ -32,20 +26,42 @@ const SignUpScreen = () => {
     navigation.navigate("SignIn");
   };
   const onRegisterPressed = () => {
-    // console.warn("Register Clicked");
-    navigation.navigate("ConfirmEmail");
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.warn("User Created Successfully");
+        navigation.navigate("SignIn");
+        setEmail("");
+        setPassword("");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        if (errorCode == "auth/weak-password") {
+          console.warn("Weak password");
+        } else if (errorCode == "auth/email-already-in-use") {
+          console.warn("Email already used");
+        }
+        navigation.navigate("SignUp");
+      });
   };
   return (
     <ScrollView>
       <View style={styles.root}>
         <Text style={styles.title}>Create An Account</Text>
         <View style={styles.bottomContainer}>
-          <CustomInput
+          {/* <CustomInput
             placeholder="Username"
             value={username}
             setValue={setUsername}
+          /> */}
+          <CustomInput
+            placeholder="Email"
+            value={email}
+            setValue={setEmail}
+            autoFocus={true}
           />
-          <CustomInput placeholder="Email" value={email} setValue={setEmail} />
 
           <CustomInput
             placeholder="Password"
@@ -53,12 +69,12 @@ const SignUpScreen = () => {
             setValue={setPassword}
             secureTextEntry={true}
           />
-          <CustomInput
+          {/* <CustomInput
             placeholder="Confirm Password"
             value={passwordRepeat}
             setValue={setPasswordRepeat}
             secureTextEntry={true}
-          />
+          /> */}
           <CustomButton text="Register" onPress={onRegisterPressed} />
           <Text style={styles.text}>
             By registering, you confirm that you accept our

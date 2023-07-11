@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { StyleSheet, View } from "react-native";
 
 import CustomButton from "./CustomButton.js";
 import React from "react";
+import auth from "../../Firebase.js";
 
 const SocialSignInButtons = () => {
-  const onSignInFacebook = () => {
-    console.warn("onSignInFacebook");
-  };
+  const provider = new GoogleAuthProvider();
 
   const onSignInGoogle = () => {
+    signInWithRedirect(auth, provider);
     console.warn("onSignInGoogle");
   };
 
@@ -18,12 +19,6 @@ const SocialSignInButtons = () => {
 
   return (
     <View style={styles.SocialSignInButtons}>
-      <CustomButton
-        text="Sign In with Facebook"
-        onPress={onSignInFacebook}
-        bgColor="#E7EAF4"
-        fgColor="#4765A9"
-      />
       <CustomButton
         text="Sign In with Google"
         onPress={onSignInGoogle}
