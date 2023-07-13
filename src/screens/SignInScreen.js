@@ -11,7 +11,7 @@ import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import Logo from "../../assets/images/Bronco.png";
 import SocialSignInButtons from "../components/SocialSignInButtons";
-import auth from "../../Firebase";
+import { auth } from "../../Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 
@@ -79,7 +79,7 @@ const SignInScreen = () => {
           />
 
           <View style={styles.bottomButtonContainer}>
-            <SocialSignInButtons />
+            <SocialSignInButtons/>
 
             <CustomButton
               text="Don't have an account? Create one"
